@@ -15,6 +15,10 @@ def start():
 
     status = "ingame"
 
+def rocket_object_1():
+    global status
+
+    status = "rocket_1"
 
 # draw button
 def draw_menu():
@@ -39,12 +43,22 @@ def draw_ingame_button():
             config.Button(win, 30, 450, 200, 90, config.font, "Rocket 3")
         ]
         config.draw_button(btn)
-        config.button_action(btn, [lambda: ..., lambda: ..., lambda: ...])
+        config.button_action(btn, [rocket_object_1, lambda: ..., lambda: ...])
+
+def draw_rocket_object_1():
+    global status
+
+    if status == "rocket_1":
+        obj = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
+        obj.render()
 
 # update
 def update():
     draw_menu()
     draw_ingame_button()
+
+    # render rocket objects
+    draw_rocket_object_1()
 
 # run
 def main():
