@@ -107,6 +107,10 @@ class RocketObjectLoader:
         if string.startswith("FuelTank_1("): return True
         return False
 
+    def isEngine_1(self, string):
+        if string.startswith("FuelTank_1("): return True
+        return False
+
     def render(self):
         for content in self.content:
             x = content.split("(")[1].replace("(", "").replace(")", "").split(",")[0]
