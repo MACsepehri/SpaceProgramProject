@@ -93,3 +93,27 @@ def button_action(btn_list, action_list):
         if btn.is_clicked():
             action_list[i]()
         i += 1
+
+class RocketObjectLoader:
+    def __init__(self, file: str, win):
+        self.content = open(file, "r").readlines()
+        self.win = win
+
+    def isNose(self, string):
+        if string.startswith("NoseObject("): return True
+        return False
+
+    def isFuelTank1(self, string):
+        if string.startswith("FuelTank_1("): return True
+        return False
+
+    def render(self):
+        for content in self.content:
+            x = content.split("(")[1].replace("(", "").replace(")", "").split(",")[0]
+            y = content.split("(")[1].replace("(", "").replace(")", "").split(",")[1]
+            x = int(x)
+            y = int(y)
+            if self.isNose(content):
+                self.win.blit(pygame.image.load("SpaceProgramProjectAssets/assets/nose/nose.png"), (x, y))
+            elif self.isFuelTank1(content):
+                self.win.blit(pygame.image.load("SpaceProgramProjectAssets/assets/fuel_tank/fuel_tank_1.png"), (x, y))
