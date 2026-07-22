@@ -117,3 +117,7 @@ class RocketObjectLoader:
                 self.win.blit(pygame.image.load("SpaceProgramProjectAssets/assets/nose/nose.png"), (x, y))
             elif self.isFuelTank1(content):
                 self.win.blit(pygame.image.load("SpaceProgramProjectAssets/assets/fuel_tank/fuel_tank_1.png"), (x, y))
+
+def hide_button(btn_list):
+    for btn in btn_list:
+        btn.hide()
