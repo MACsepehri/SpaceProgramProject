@@ -66,3 +66,10 @@ class Button:
 def draw_button(btn_list, win):
     for btn in btn_list:
         btn.draw(win)
+
+def button_action(btn_list, action_list):
+    i = 0
+    for btn in btn_list:
+        if btn.is_clicked():
+            action_list[i]()
+        i += 1
