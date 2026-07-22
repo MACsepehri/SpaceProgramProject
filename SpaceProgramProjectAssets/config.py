@@ -66,9 +66,9 @@ class Button:
     def show(self):
         self.visible = True
 
-def draw_button(btn_list, win):
+def draw_button(btn_list):
     for btn in btn_list:
-        btn.draw(win)
+        btn.draw()
 
 def button_action(btn_list, action_list):
     i = 0
