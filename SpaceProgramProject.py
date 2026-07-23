@@ -12,6 +12,7 @@ FPS = 60
 status = "menu"
 ingame = False
 engine_is_on = False
+space_pressed = False
 
 # set rocket positions
 def set_rocket_middle():
@@ -83,29 +84,40 @@ def help_text():
 
 def change_engine_state():
     global engine_is_on
-
-    if not engine_is_on:
-        engine_is_on = True
-    else:
-        engine_is_on = False
+    engine_is_on = not engine_is_on
 
 # update
 def update():
+    global ingame
+    global engine_is_on
+    global space_pressed
+
+    # handle key 
+    keys = pygame.key.get_pressed()
+    if ingame:
+        if keys[pygame.K_SPACE] and not space_pressed:
+            change_engine_state()
+            space_pressed = True
+        elif not keys[pygame.K_SPACE]:
+            space_pressed = False
+
+    # functions
     draw_menu()
     draw_ingame_button()
-    render_rotation()
     help_text()
 
     # render rocket objects
     draw_rocket_object_1()
+    if engine_is_on:
+        render_rotation()
 
 rocket_type = 0
 
-# run
-set_rocket_middle()
-
 # objects
 rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
+set_rocket_middle()
+
+# run
 def main():
     while True:
         for event in pygame.event.get():
