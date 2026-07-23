@@ -9,6 +9,12 @@ width, height = display_info.current_w, display_info.current_h
 win = pygame.display.set_mode((width, height))
 status = "menu"
 
+# set rocket positions
+def set_rocket_middle():
+    # 1
+    with open("SpaceProgramProjectAssets/rocket/1.robj", "w") as file:
+        file.write(f"NoseObject({int(width / 2 - 64)}, 200)\nFuelTank_1({int(width / 2 - 64)}, 268)\nEngine_1({int(width / 2 - 64)}, 416)")
+
 # actions
 def start():
     global status
@@ -62,6 +68,7 @@ def update():
 
 # run
 def main():
+    set_rocket_middle()
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
