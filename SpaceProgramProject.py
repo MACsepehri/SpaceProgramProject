@@ -75,13 +75,17 @@ def render_rotation():
             rocket_1.rotate(0.3)
 
 def help_text():
-    pass
+    global ingame
+
+    if ingame:
+        config.draw_text("Rotate with A - D\nTurn on/off engine with Space", True, width - 350, height - 100, win, config.small_font)
 
 # update
 def update():
     draw_menu()
     draw_ingame_button()
     render_rotation()
+    help_text()
 
     # render rocket objects
     draw_rocket_object_1()
