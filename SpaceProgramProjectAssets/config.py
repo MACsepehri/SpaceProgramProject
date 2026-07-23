@@ -201,3 +201,15 @@ def draw_launch_pad(width, height, win):
     x = width / 2 - 113
     y = height - 49
     win.blit(pad, (x, y))
+
+def show_height_type(h):
+    if h >= 1000:
+        m = []
+        res = ""
+        for data in str(h / 1000):
+            m.append(data)
+        for i in range(3):
+            res += m[i]
+        return m, "km"
+    else:
+        return h, "m"
