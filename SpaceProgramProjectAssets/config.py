@@ -196,8 +196,8 @@ def hide_button(btn_list):
     for btn in btn_list:
         btn.hide()
 
-def draw_launch_pad(width, win):
+def draw_launch_pad(width, height, win):
     pad = pygame.image.load("SpaceProgramProjectAssets/assets/launch_pad/launchpad.png")
-    x = width / 2 - 50
-    y = 604
+    x = width / 2 - 113
+    y = height - 49
     win.blit(pad, (x, y))
