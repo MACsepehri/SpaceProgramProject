@@ -108,7 +108,6 @@ class RocketObjectLoader:
         
     def load_parts(self):
         for content in self.content:
-            # Parse coordinates
             coords = content.split("(")[1].replace(")", "").split(",")
             x = int(coords[0].strip())
             y = int(coords[1].strip())
@@ -153,7 +152,6 @@ class RocketObjectLoader:
         dx = original_x - center_x
         dy = original_y - center_y
         
-        # Rotate
         rad = math.radians(self.angle)
         cos_a = math.cos(rad)
         sin_a = math.sin(rad)
@@ -197,3 +195,9 @@ class RocketObjectLoader:
 def hide_button(btn_list):
     for btn in btn_list:
         btn.hide()
+
+def draw_launch_pad(width, win):
+    pad = pygame.image.load("SpaceProgramProjectAssets/assets/launch_pad/launchpad.png")
+    x = width / 2 - 50
+    y = 604
+    win.blit(pad, (x, y))
