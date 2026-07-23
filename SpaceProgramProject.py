@@ -19,7 +19,6 @@ fly = False
 fuel = 100
 rocket_height = 0
 stop_fly = False
-rotation_value = 0
 
 # set rocket positions
 def set_rocket_middle():
@@ -180,8 +179,13 @@ def update():
         fuel -= 0
         rocket_height += 0
 
-    if rocket_height <= 0:
+    if rocket_height <= 0 and fly:
         rocket_height = 0
+        fuel = 0
+        status = "game_over"
+
+    if status == "game_over":
+        game_over()
 
     # functions
     draw_menu()
@@ -231,6 +235,15 @@ def update_rocket_file_without_fire():
     except Exception as e:
         print(str(e))
 
+def game_over():
+    global status
+
+    if ingame:
+        btn = [
+            config.Button(win, 0, height / 2 - 50, 200, 90, config.font, "Re-Try", middle=True)
+        ]
+        config.draw_button(btn)
+
 rocket_type = 0
 rocket_1 = None
 
@@ -241,7 +254,6 @@ rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", 
 # run
 def main():
     while True:
-        print(rotation_value)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit(0)
