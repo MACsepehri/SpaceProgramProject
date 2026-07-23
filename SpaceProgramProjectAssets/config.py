@@ -84,6 +84,9 @@ class Button:
             screen_width = self.win_object.get_width() if hasattr(self.win_object, 'get_width') else self.win_object.size[0]
             self.rect.x = (screen_width - self.width) // 2
 
+def draw_text(text, color, x, y, win, font):
+    win.blit(font.render(text, True, color), (x, y))
+
 def draw_button(btn_list):
     for btn in btn_list:
         btn.draw()
