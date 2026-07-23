@@ -108,13 +108,23 @@ class RocketObjectLoader:
         
     def load_parts(self):
         for content in self.content:
-            coords = content.split("(")[1].replace(")", "").split(",")
-            x = int(coords[0].strip())
-            y = int(coords[1].strip())
+            if not content.strip() or "(" not in content:
+                continue
+                
+            try:
+                coords = content.split("(")[1].replace(")", "").split(",")
+                x = int(coords[0].strip())
+                y = int(coords[1].strip())
+            except (IndexError, ValueError) as e:
+                print(f"Error parsing line: {content.strip()} - {e}")
+                continue
             
             if self.isNose(content):
                 part_type = "nose"
                 image_path = "SpaceProgramProjectAssets/assets/nose/nose.png"
+            elif self.isFireEngine(content):
+                part_type = "fire_engine"
+                image_path = "SpaceProgramProjectAssets/assets/fire/fire_engine.png"
             elif self.isFuelTank1(content):
                 part_type = "fuel_tank"
                 image_path = "SpaceProgramProjectAssets/assets/fuel_tank/fuel_tank_1.png"
@@ -122,9 +132,16 @@ class RocketObjectLoader:
                 part_type = "engine"
                 image_path = "SpaceProgramProjectAssets/assets/engine/engine1.png"
             else:
+                print(f"Unknown part type: {content.strip()}")
                 continue
                 
-            image = pygame.image.load(image_path).convert_alpha()
+            try:
+                image = pygame.image.load(image_path).convert_alpha()
+            except pygame.error as e:
+                print(f"Failed to load image: {image_path} - {e}")
+                continue
+            
+            print(f"Loaded {part_type} at ({x}, {y})")
             
             self.parts.append({
                 'type': part_type,
@@ -134,15 +151,20 @@ class RocketObjectLoader:
                 'original_x': x,
                 'original_y': y
             })
+        
+        print(f"Total parts loaded: {len(self.parts)}")
     
     def isNose(self, string):
-        return string.startswith("NoseObject(")
+        return string.strip().startswith("NoseObject(")
     
     def isFuelTank1(self, string):
-        return string.startswith("FuelTank_1(")
+        return string.strip().startswith("FuelTank_1(")
     
     def isEngine_1(self, string):
-        return string.startswith("Engine_1(")
+        return string.strip().startswith("Engine_1(")
+
+    def isFireEngine(self, string):
+        return string.strip().startswith("FireEngine(")
     
     def rotate(self, angle_change):
         self.angle += angle_change
@@ -166,12 +188,21 @@ class RocketObjectLoader:
     
     def render(self):
         if not self.parts:
+            print("No parts to render")
             return
             
         center_x = sum(p['x'] for p in self.parts) // len(self.parts)
         center_y = sum(p['y'] for p in self.parts) // len(self.parts)
         
-        for part in self.parts:
+        render_order = {
+            'nose': 0,
+            'fuel_tank': 1,
+            'engine': 2,
+            'fire_engine': 3
+        }
+        sorted_parts = sorted(self.parts, key=lambda p: render_order.get(p['type'], 0))
+        
+        for part in sorted_parts:
             pos_x, pos_y = self.get_rotated_position(
                 part['original_x'], 
                 part['original_y'],
@@ -191,6 +222,20 @@ class RocketObjectLoader:
                 self.rotate(2)
             return True
         return False
+    
+    def toggle_fire(self, show_fire=True):
+        for part in self.parts:
+            if part['type'] == 'fire_engine':
+                if show_fire:
+                    try:
+                        part['image'] = pygame.image.load(
+                            "SpaceProgramProjectAssets/assets/fire/fire_engine.png"
+                        ).convert_alpha()
+                    except pygame.error:
+                        pass
+                else:
+                    part['image'] = pygame.Surface((1, 1), pygame.SRCALPHA)
+                break
 
 def hide_button(btn_list):
     for btn in btn_list:
