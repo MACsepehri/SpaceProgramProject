@@ -13,6 +13,9 @@ status = "menu"
 ingame = False
 engine_is_on = False
 space_pressed = False
+max_height = 300
+rocket_1_y = 0
+fly = False
 
 # set rocket positions
 def set_rocket_middle():
@@ -91,6 +94,11 @@ def update():
     global ingame
     global engine_is_on
     global space_pressed
+    global max_height
+    global rocket_1_y
+    global rocket_1s
+    global rocket_1
+    global fly
 
     # handle key 
     keys = pygame.key.get_pressed()
@@ -98,12 +106,34 @@ def update():
         if keys[pygame.K_SPACE] and not space_pressed:
             change_engine_state()
             space_pressed = True
+            fly = True
+
         elif not keys[pygame.K_SPACE]:
             space_pressed = False
 
-    # if and else
     if ingame:
         config.draw_launch_pad(width, height, win)
+
+    if int(rocket_1_y) != int(max_height) and fly:
+        with open("SpaceProgramProjectAssets/rocket/1.robj", "r") as file:
+            data = file.readlines()
+        
+        y_coords = []
+        for content in data:
+            y_coords.append(int(float(content.split("(")[1].replace(")", "").split(",")[1].replace("\n", ""))))
+        
+        speed = 2
+        new_y_coords = [y - speed for y in y_coords]
+        
+        with open("SpaceProgramProjectAssets/rocket/1.robj", "w") as file:
+            file.write(f"NoseObject({int(width / 2 - 64)}, {new_y_coords[0]})\n")
+            file.write(f"FuelTank_1({int(width / 2 - 64)}, {new_y_coords[1]})\n")
+            file.write(f"Engine_1({int(width / 2 - 64)}, {new_y_coords[2]})")
+        
+        rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
+        rocket_1.render()
+        
+        rocket_1_y = abs(new_y_coords[0])
 
     # functions
     draw_menu()
