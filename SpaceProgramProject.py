@@ -18,7 +18,7 @@ space_pressed = False
 def set_rocket_middle():
     # 1
     with open("SpaceProgramProjectAssets/rocket/1.robj", "w") as file:
-        file.write(f"NoseObject({int(width / 2 - 64)}, 350)\nFuelTank_1({int(width / 2 - 64)}, 458)\nEngine_1({int(width / 2 - 64)}, 555)")
+        file.write(f"NoseObject({int(width / 2 - 64)}, {height - 262})\nFuelTank_1({int(width / 2 - 64)}, {height - 154})\nEngine_1({int(width / 2 - 64)}, {height - 57})")
 
 # actions
 def start():
@@ -101,6 +101,10 @@ def update():
         elif not keys[pygame.K_SPACE]:
             space_pressed = False
 
+    # if and else
+    if ingame:
+        config.draw_launch_pad(width, height, win)
+
     # functions
     draw_menu()
     draw_ingame_button()
@@ -114,8 +118,8 @@ def update():
 rocket_type = 0
 
 # objects
-rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
 set_rocket_middle()
+rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
 
 # run
 def main():
