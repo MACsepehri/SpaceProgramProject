@@ -11,6 +11,7 @@ clock = pygame.time.Clock()
 FPS = 60
 status = "menu"
 ingame = False
+engine_is_on = False
 
 # set rocket positions
 def set_rocket_middle():
@@ -79,6 +80,14 @@ def help_text():
 
     if ingame:
         config.draw_text("Rotate with A - D\nTurn on/off engine with Space", True, width - 350, height - 100, win, config.small_font)
+
+def change_engine_state():
+    global engine_is_on
+
+    if not engine_is_on:
+        engine_is_on = True
+    else:
+        engine_is_on = False
 
 # update
 def update():
