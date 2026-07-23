@@ -1,4 +1,5 @@
 import pygame
+import math
 
 # init
 pygame.init()
@@ -98,32 +99,97 @@ class RocketObjectLoader:
     def __init__(self, file: str, win):
         self.content = open(file, "r").readlines()
         self.win = win
-
-    def isNose(self, string):
-        if string.startswith("NoseObject("): return True
-        return False
-
-    def isFuelTank1(self, string):
-        if string.startswith("FuelTank_1("): return True
-        return False
-
-    def isEngine_1(self, string):
-        if string.startswith("Engine_1("): return True
-        return False
-
-    def render(self):
+        self.angle = 0
+        self.parts = []
+        self.load_parts()
+        
+    def load_parts(self):
         for content in self.content:
-            x = content.split("(")[1].replace("(", "").replace(")", "").split(",")[0]
-            y = content.split("(")[1].replace("(", "").replace(")", "").split(",")[1]
-            x = int(x)
-            y = int(y)
+            # Parse coordinates
+            coords = content.split("(")[1].replace(")", "").split(",")
+            x = int(coords[0].strip())
+            y = int(coords[1].strip())
+            
             if self.isNose(content):
-                self.win.blit(pygame.image.load("SpaceProgramProjectAssets/assets/nose/nose.png"), (x, y))
+                part_type = "nose"
+                image_path = "SpaceProgramProjectAssets/assets/nose/nose.png"
             elif self.isFuelTank1(content):
-                self.win.blit(pygame.image.load("SpaceProgramProjectAssets/assets/fuel_tank/fuel_tank_1.png"), (x, y))
+                part_type = "fuel_tank"
+                image_path = "SpaceProgramProjectAssets/assets/fuel_tank/fuel_tank_1.png"
             elif self.isEngine_1(content):
-                print(True)
-                self.win.blit(pygame.image.load("SpaceProgramProjectAssets/assets/engine/engine1.png"), (x, y))
+                part_type = "engine"
+                image_path = "SpaceProgramProjectAssets/assets/engine/engine1.png"
+            else:
+                continue
+                
+            image = pygame.image.load(image_path).convert_alpha()
+            
+            self.parts.append({
+                'type': part_type,
+                'x': x,
+                'y': y,
+                'image': image,
+                'original_x': x,
+                'original_y': y
+            })
+    
+    def isNose(self, string):
+        return string.startswith("NoseObject(")
+    
+    def isFuelTank1(self, string):
+        return string.startswith("FuelTank_1(")
+    
+    def isEngine_1(self, string):
+        return string.startswith("Engine_1(")
+    
+    def rotate(self, angle_change):
+        self.angle += angle_change
+        self.angle %= 360
+    
+    def get_rotated_position(self, original_x, original_y, center_x, center_y):
+        dx = original_x - center_x
+        dy = original_y - center_y
+        
+        # Rotate
+        rad = math.radians(self.angle)
+        cos_a = math.cos(rad)
+        sin_a = math.sin(rad)
+        
+        new_dx = dx * cos_a - dy * sin_a
+        new_dy = dx * sin_a + dy * cos_a
+        
+        new_x = center_x + new_dx
+        new_y = center_y + new_dy
+        
+        return int(new_x), int(new_y)
+    
+    def render(self):
+        if not self.parts:
+            return
+            
+        center_x = sum(p['x'] for p in self.parts) // len(self.parts)
+        center_y = sum(p['y'] for p in self.parts) // len(self.parts)
+        
+        for part in self.parts:
+            pos_x, pos_y = self.get_rotated_position(
+                part['original_x'], 
+                part['original_y'],
+                center_x,
+                center_y
+            )
+            
+            rotated_image = pygame.transform.rotate(part['image'], -self.angle)
+            rect = rotated_image.get_rect(center=(pos_x, pos_y))
+            self.win.blit(rotated_image, rect)
+    
+    def handle_input(self, keys):
+        if keys[pygame.K_a] or keys[pygame.K_d]:
+            if keys[pygame.K_a]:
+                self.rotate(-2)
+            if keys[pygame.K_d]:
+                self.rotate(2)
+            return True
+        return False
 
 def hide_button(btn_list):
     for btn in btn_list:
