@@ -19,6 +19,7 @@ fly = False
 fuel = 100
 rocket_height = 0
 stop_fly = False
+rotation_value = 0
 
 # set rocket positions
 def set_rocket_middle():
@@ -77,6 +78,7 @@ def draw_rocket_object_1():
 def render_rotation():
     global status
     global rocket_type
+    global rotation_value
 
     if status == "rocket_1" and rocket_type == 1:
         keys = pygame.key.get_pressed()
@@ -85,6 +87,7 @@ def render_rotation():
             rocket_1.rotate(-0.3)
         if keys[pygame.K_d]:
             rocket_1.rotate(0.3)
+            rotation_value += 0.3
 
 def help_text():
     global ingame
@@ -109,6 +112,7 @@ def update():
     global rocket_height
     global stop_fly
     global status
+    global rotation_value
 
     # handle key 
     keys = pygame.key.get_pressed()
@@ -133,7 +137,10 @@ def update():
 
     if ingame and fly and engine_is_on and status == "rocket_1":
         fuel -= 0.01
-        rocket_height += 0.02
+        if int(rotation_value) >= 90:
+            rocket_height -= 0.02
+        else:
+            rocket_height += 0.02
 
     if int(rocket_1_y) != int(max_height) and fly and engine_is_on and status == "rocket_1":
         with open("SpaceProgramProjectAssets/rocket/1.robj", "r") as file:
@@ -172,6 +179,9 @@ def update():
     if stop_fly:
         fuel -= 0
         rocket_height += 0
+
+    if rocket_height <= 0:
+        rocket_height = 0
 
     # functions
     draw_menu()
@@ -231,6 +241,7 @@ rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", 
 # run
 def main():
     while True:
+        print(rotation_value)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit(0)
