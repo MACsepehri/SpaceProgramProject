@@ -7,13 +7,15 @@ pygame.init()
 display_info = pygame.display.Info()
 width, height = display_info.current_w, display_info.current_h
 win = pygame.display.set_mode((width, height))
+clock = pygame.time.Clock()
+FPS = 60
 status = "menu"
 
 # set rocket positions
 def set_rocket_middle():
     # 1
     with open("SpaceProgramProjectAssets/rocket/1.robj", "w") as file:
-        file.write(f"NoseObject({int(width / 2 - 64)}, 200)\nFuelTank_1({int(width / 2 - 64)}, 308)\nEngine_1({int(width / 2 - 64)}, 405)")
+        file.write(f"NoseObject({int(width / 2 - 64)}, 350)\nFuelTank_1({int(width / 2 - 64)}, 458)\nEngine_1({int(width / 2 - 64)}, 555)")
 
 # actions
 def start():
@@ -67,9 +69,9 @@ def render_rotation():
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
-            rocket_1.rotate(-2)
+            rocket_1.rotate(-0.3)
         if keys[pygame.K_d]:
-            rocket_1.rotate(2)
+            rocket_1.rotate(0.3)
 
 # update
 def update():
@@ -80,14 +82,14 @@ def update():
     # render rocket objects
     draw_rocket_object_1()
 
-# objects
-rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
-
 rocket_type = 0
 
 # run
+set_rocket_middle()
+
+# objects
+rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
 def main():
-    set_rocket_middle()
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -96,6 +98,7 @@ def main():
         win.fill("skyblue")
         update()
         pygame.display.update()
+        clock.tick(FPS)
 
 if __name__ == "__main__":
     main()
