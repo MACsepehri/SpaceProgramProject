@@ -19,6 +19,7 @@ fly = False
 fuel = 100
 rocket_height = 0
 stop_fly = False
+rotation_value = 0
 
 # set rocket positions
 def set_rocket_middle():
@@ -235,6 +236,28 @@ def update_rocket_file_without_fire():
     except Exception as e:
         print(str(e))
 
+def restart():
+    global status, ingame, rocket_1
+    global fly, engine_is_on
+    global fuel, rocket_height
+    global rocket_1_y, rotation_value
+    global space_pressed
+
+    status = "rocket_1"
+    ingame = True
+
+    fly = False
+    engine_is_on = False
+    space_pressed = False
+
+    fuel = 100
+    rocket_height = 0
+    rocket_1_y = 0
+    rotation_value = 0
+
+    set_rocket_middle()
+    rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
+
 def game_over():
     global status
 
@@ -243,6 +266,7 @@ def game_over():
             config.Button(win, 0, height / 2 - 50, 200, 90, config.font, "Re-Try", middle=True)
         ]
         config.draw_button(btn)
+        config.button_action(btn, [restart])
 
 rocket_type = 0
 rocket_1 = None
