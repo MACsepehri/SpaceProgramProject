@@ -13,7 +13,7 @@ status = "menu"
 def set_rocket_middle():
     # 1
     with open("SpaceProgramProjectAssets/rocket/1.robj", "w") as file:
-        file.write(f"NoseObject({int(width / 2 - 64)}, 200)\nFuelTank_1({int(width / 2 - 64)}, 268)\nEngine_1({int(width / 2 - 64)}, 416)")
+        file.write(f"NoseObject({int(width / 2 - 64)}, 200)\nFuelTank_1({int(width / 2 - 64)}, 308)\nEngine_1({int(width / 2 - 64)}, 405)")
 
 # actions
 def start():
@@ -53,18 +53,37 @@ def draw_ingame_button():
 
 def draw_rocket_object_1():
     global status
+    global rocket_type
 
     if status == "rocket_1":
-        obj = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
-        obj.render()
+        rocket_1.render()
+        rocket_type = 1
+
+def render_rotation():
+    global status
+    global rocket_type
+
+    if status == "rocket_1" and rocket_type == 1:
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_a]:
+            rocket_1.rotate(-2)
+        if keys[pygame.K_d]:
+            rocket_1.rotate(2)
 
 # update
 def update():
     draw_menu()
     draw_ingame_button()
+    render_rotation()
 
     # render rocket objects
     draw_rocket_object_1()
+
+# objects
+rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
+
+rocket_type = 0
 
 # run
 def main():
