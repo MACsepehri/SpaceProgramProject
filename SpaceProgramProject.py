@@ -198,18 +198,17 @@ def update_rocket_file_with_fire():
             global rocket_1
             rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
     except Exception as e:
-        print(f"Error updating file with fire: {e}")
+        print(str(e))
 
 def update_rocket_file_without_fire():
     try:
         with open("SpaceProgramProjectAssets/rocket/1.robj", "r") as file:
             data = file.readlines()
         
-        # Check if has FireEngine
         if len(data) >= 3 and data[2].startswith("FireEngine("):
             coords = data[2].split("(")[1].replace(")", "").split(",")
             x = coords[0].strip()
-            y = coords[1].strip()
+            y = int(data[1].split("(")[1].replace(")", "").split(",")[1]) + 97
             data[2] = f"Engine_1({x}, {y})\n"
             
             with open("SpaceProgramProjectAssets/rocket/1.robj", "w") as file:
@@ -218,7 +217,7 @@ def update_rocket_file_without_fire():
             global rocket_1
             rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
     except Exception as e:
-        print(f"Error updating file without fire: {e}")
+        print(str(e))
 
 rocket_type = 0
 rocket_1 = None
