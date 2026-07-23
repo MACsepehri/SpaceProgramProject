@@ -10,6 +10,7 @@ win = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
 FPS = 60
 status = "menu"
+ingame = False
 
 # set rocket positions
 def set_rocket_middle():
@@ -20,12 +21,12 @@ def set_rocket_middle():
 # actions
 def start():
     global status
-
     status = "ingame"
 
 def rocket_object_1():
     global status
-
+    global ingame
+    ingame = True
     status = "rocket_1"
 
 # draw button
