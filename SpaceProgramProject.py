@@ -21,6 +21,8 @@ rocket_height = 0
 stop_fly = False
 rotation_value = 0
 
+color = (135,206,235)
+
 # set rocket positions
 def set_rocket_middle():
     # 1
@@ -282,7 +284,7 @@ def main():
             if event.type == pygame.QUIT:
                 sys.exit(0)
 
-        win.fill("skyblue")
+        win.fill(color)
         update()
         pygame.display.update()
         clock.tick(FPS)
