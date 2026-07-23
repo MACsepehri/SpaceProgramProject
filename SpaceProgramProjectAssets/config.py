@@ -116,7 +116,7 @@ class RocketObjectLoader:
                 x = int(coords[0].strip())
                 y = int(coords[1].strip())
             except (IndexError, ValueError) as e:
-                print(f"Error parsing line: {content.strip()} - {e}")
+                print(str(e))
                 continue
             
             if self.isNose(content):
@@ -141,8 +141,6 @@ class RocketObjectLoader:
                 print(f"Failed to load image: {image_path} - {e}")
                 continue
             
-            print(f"Loaded {part_type} at ({x}, {y})")
-            
             self.parts.append({
                 'type': part_type,
                 'x': x,
@@ -151,8 +149,6 @@ class RocketObjectLoader:
                 'original_x': x,
                 'original_y': y
             })
-        
-        print(f"Total parts loaded: {len(self.parts)}")
     
     def isNose(self, string):
         return string.strip().startswith("NoseObject(")
@@ -188,7 +184,6 @@ class RocketObjectLoader:
     
     def render(self):
         if not self.parts:
-            print("No parts to render")
             return
             
         center_x = sum(p['x'] for p in self.parts) // len(self.parts)
