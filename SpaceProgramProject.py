@@ -124,10 +124,11 @@ def update():
         elif not keys[pygame.K_SPACE]:
             space_pressed = False
 
-    if ingame:
+    if ingame and not fly:
         config.draw_launch_pad(width, height, win)
-        # draw fuel
-        config.draw_text(f"Fuel: {int(fuel)}\nHeight: {config.show_height_type(int(rocket_height))[0]} {config.show_height_type(int(rocket_height))[1]}", "black", 10, height - 100, win, config.font)
+
+    # draw fuel
+    config.draw_text(f"Fuel: {int(fuel)}\nHeight: {config.show_height_type(int(rocket_height))[0]} {config.show_height_type(int(rocket_height))[1]}", "black", 10, height - 100, win, config.font)
 
     if ingame and fly and engine_is_on and status == "rocket_1":
         fuel -= 0.01
