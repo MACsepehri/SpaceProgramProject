@@ -74,6 +74,9 @@ def render_rotation():
         if keys[pygame.K_d]:
             rocket_1.rotate(0.3)
 
+def help_text():
+    pass
+
 # update
 def update():
     draw_menu()
