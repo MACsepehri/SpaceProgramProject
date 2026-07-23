@@ -17,6 +17,7 @@ max_height = 300
 rocket_1_y = 0
 fly = False
 fuel = 100
+rocket_height = 0
 
 # set rocket positions
 def set_rocket_middle():
@@ -101,6 +102,7 @@ def update():
     global rocket_1
     global fly
     global fuel
+    global rocket_height
 
     # handle key 
     keys = pygame.key.get_pressed()
@@ -116,10 +118,11 @@ def update():
     if ingame:
         config.draw_launch_pad(width, height, win)
         # draw fuel
-        config.draw_text(f"Fuel: {int(fuel)}", "black", 10, height - 50, win, config.font)
+        config.draw_text(f"Fuel: {int(fuel)}\nHeight: {int(rocket_height)}", "black", 10, height - 100, win, config.font)
 
     if ingame and fly:
         fuel -= 0.01
+        rocket_height += 0.02
 
     if int(rocket_1_y) != int(max_height) and fly:
         with open("SpaceProgramProjectAssets/rocket/1.robj", "r") as file:
