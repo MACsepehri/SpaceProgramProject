@@ -34,8 +34,11 @@ def start():
 def rocket_object_1():
     global status
     global ingame
+    global rocket_1
     ingame = True
     status = "rocket_1"
+
+    rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
 
 # draw button
 def draw_menu():
@@ -65,6 +68,7 @@ def draw_ingame_button():
 def draw_rocket_object_1():
     global status
     global rocket_type
+    global rocket_1
 
     if status == "rocket_1":
         rocket_1.render()
@@ -99,20 +103,24 @@ def update():
     global space_pressed
     global max_height
     global rocket_1_y
-    global rocket_1s
     global rocket_1
     global fly
     global fuel
     global rocket_height
     global stop_fly
+    global status
 
     # handle key 
     keys = pygame.key.get_pressed()
-    if ingame:
+    if ingame and status == "rocket_1":
         if keys[pygame.K_SPACE] and not space_pressed:
             change_engine_state()
             space_pressed = True
             fly = True
+            if engine_is_on:
+                update_rocket_file_with_fire()
+            else:
+                update_rocket_file_without_fire()
         elif not keys[pygame.K_SPACE]:
             space_pressed = False
 
@@ -121,33 +129,43 @@ def update():
         # draw fuel
         config.draw_text(f"Fuel: {int(fuel)}\nHeight: {config.show_height_type(int(rocket_height))[0]} {config.show_height_type(int(rocket_height))[1]}", "black", 10, height - 100, win, config.font)
 
-    if ingame and fly and engine_is_on:
+    if ingame and fly and engine_is_on and status == "rocket_1":
         fuel -= 0.01
         rocket_height += 0.02
 
-    if int(rocket_1_y) != int(max_height) and fly and engine_is_on:
+    if int(rocket_1_y) != int(max_height) and fly and engine_is_on and status == "rocket_1":
         with open("SpaceProgramProjectAssets/rocket/1.robj", "r") as file:
             data = file.readlines()
         
         y_coords = []
         for content in data:
-            y_coords.append(int(float(content.split("(")[1].replace(")", "").split(",")[1].replace("\n", ""))))
+            try:
+                y_coords.append(int(float(content.split("(")[1].replace(")", "").split(",")[1].replace("\n", ""))))
+            except (IndexError, ValueError):
+                continue
         
-        speed = 2
-        new_y_coords = [y - speed for y in y_coords]
-        
-        with open("SpaceProgramProjectAssets/rocket/1.robj", "w") as file:
-            file.write(f"NoseObject({int(width / 2 - 64)}, {new_y_coords[0]})\n")
-            file.write(f"FuelTank_1({int(width / 2 - 64)}, {new_y_coords[1]})\n")
-            file.write(f"Engine_1({int(width / 2 - 64)}, {new_y_coords[2]})")
-        
-        rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
-        rocket_1.render()
-        
-        rocket_1_y = abs(new_y_coords[0])
+        if len(y_coords) >= 3:
+            speed = 2
+            new_y_coords = [y - speed for y in y_coords]
+            
+            with open("SpaceProgramProjectAssets/rocket/1.robj", "w") as file:
+                file.write(f"NoseObject({int(width / 2 - 64)}, {new_y_coords[0]})\n")
+                file.write(f"FuelTank_1({int(width / 2 - 64)}, {new_y_coords[1]})\n")
+                if engine_is_on:
+                    file.write(f"FireEngine({int(width / 2 - 64)}, {new_y_coords[2]})")
+                else:
+                    file.write(f"Engine_1({int(width / 2 - 64)}, {new_y_coords[2]})")
+            
+            rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
+            rocket_1.render()
+            
+            rocket_1_y = abs(new_y_coords[0])
 
     if fuel <= 0:
         fly = False
+        engine_is_on = False
+        update_rocket_file_without_fire()
+        rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
 
     if stop_fly:
         fuel -= 0
@@ -160,10 +178,51 @@ def update():
 
     # render rocket objects
     draw_rocket_object_1()
-    if engine_is_on:
+    if engine_is_on and status == "rocket_1":
         render_rotation()
 
+def update_rocket_file_with_fire():
+    """Update rocket file to include FireEngine"""
+    try:
+        with open("SpaceProgramProjectAssets/rocket/1.robj", "r") as file:
+            data = file.readlines()
+        
+        if len(data) >= 3 and not data[2].startswith("FireEngine("):
+            coords = data[2].split("(")[1].replace(")", "").split(",")
+            x = coords[0].strip()
+            y = coords[1].strip()
+            data[2] = f"FireEngine({x}, {y})\n"
+            
+            with open("SpaceProgramProjectAssets/rocket/1.robj", "w") as file:
+                file.writelines(data)
+            
+            global rocket_1
+            rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
+    except Exception as e:
+        print(f"Error updating file with fire: {e}")
+
+def update_rocket_file_without_fire():
+    try:
+        with open("SpaceProgramProjectAssets/rocket/1.robj", "r") as file:
+            data = file.readlines()
+        
+        # Check if has FireEngine
+        if len(data) >= 3 and data[2].startswith("FireEngine("):
+            coords = data[2].split("(")[1].replace(")", "").split(",")
+            x = coords[0].strip()
+            y = coords[1].strip()
+            data[2] = f"Engine_1({x}, {y})\n"
+            
+            with open("SpaceProgramProjectAssets/rocket/1.robj", "w") as file:
+                file.writelines(data)
+            
+            global rocket_1
+            rocket_1 = config.RocketObjectLoader("SpaceProgramProjectAssets/rocket/1.robj", win)
+    except Exception as e:
+        print(f"Error updating file without fire: {e}")
+
 rocket_type = 0
+rocket_1 = None
 
 # objects
 set_rocket_middle()
