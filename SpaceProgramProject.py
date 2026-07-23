@@ -182,7 +182,6 @@ def update():
         render_rotation()
 
 def update_rocket_file_with_fire():
-    """Update rocket file to include FireEngine"""
     try:
         with open("SpaceProgramProjectAssets/rocket/1.robj", "r") as file:
             data = file.readlines()
@@ -190,7 +189,7 @@ def update_rocket_file_with_fire():
         if len(data) >= 3 and not data[2].startswith("FireEngine("):
             coords = data[2].split("(")[1].replace(")", "").split(",")
             x = coords[0].strip()
-            y = coords[1].strip()
+            y = int(coords[1].strip()) + 80
             data[2] = f"FireEngine({x}, {y})\n"
             
             with open("SpaceProgramProjectAssets/rocket/1.robj", "w") as file:
