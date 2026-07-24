@@ -22,6 +22,10 @@ stop_fly = False
 rotation_value = 0
 
 color = (135,206,235)
+fifty_color = (89,176,212)
+one_hundred_color = (47,136,173)
+one_hundred_fifty_color = (7,90,125)
+two_hundred_color = (20,20,20)
 
 # set rocket positions
 def set_rocket_middle():
@@ -116,6 +120,8 @@ def update():
     global status
     global rotation_value
 
+    global color, fifty_color, one_hundred_color, one_hundred_fifty_color, two_hundred_color
+
     # handle key 
     keys = pygame.key.get_pressed()
     if ingame and status == "rocket_1":
@@ -129,6 +135,19 @@ def update():
                 update_rocket_file_without_fire()
         elif not keys[pygame.K_SPACE]:
             space_pressed = False
+
+    if rocket_height >= 200:
+        color = two_hundred_color
+        win.fill(color)
+    elif rocket_height >= 150:
+        color = one_hundred_fifty_color
+        win.fill(color)
+    elif rocket_height >= 100:
+        color = one_hundred_color
+        win.fill(color)
+    elif rocket_height >= 50:
+        color = fifty_color
+        win.fill(color)
 
     if ingame and not fly:
         config.draw_launch_pad(width, height, win)
